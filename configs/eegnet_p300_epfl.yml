@@ -1,0 +1,40 @@
+experiment_name: eegnet_p300_epfl_subject6
+output_dir: runs
+
+dataset:
+  source: moabb
+  name: EPFLP300
+  paradigm: p300
+  subjects: [6]
+  data_dir: data/moabb
+  fmin: 1.0
+  fmax: 24.0
+  tmin: 0.0
+  tmax: 1.0
+  resample: 128.0
+  standardize: trial
+  synthetic_trials: 192
+  synthetic_channels: 32
+  synthetic_times: 128
+  synthetic_classes: 2
+
+model:
+  name: eegnet
+  framework: torch
+  kwargs:
+    final_conv_length: auto
+
+training:
+  epochs: 25
+  batch_size: 128
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  class_weight: balanced
+  valid_size: 0.15
+  test_size: 0.20
+  seed: 42
+  patience: 8
+  num_workers: 0
+  device: auto
+  amp: true
+

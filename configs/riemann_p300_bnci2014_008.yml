@@ -1,0 +1,29 @@
+experiment_name: riemann_p300_bnci2014_008_subject1
+output_dir: runs
+
+dataset:
+  source: moabb
+  name: BNCI2014_008
+  paradigm: p300
+  subjects: [1]
+  data_dir: data/moabb
+  fmin: 1.0
+  fmax: 24.0
+  tmin: 0.0
+  tmax: 1.0
+  resample: 128.0
+  standardize: trial
+  synthetic_trials: 192
+  synthetic_channels: 8
+  synthetic_times: 128
+  synthetic_classes: 2
+
+model:
+  name: riemann_tangent
+  framework: sklearn
+
+training:
+  valid_size: 0.15
+  test_size: 0.20
+  seed: 42
+

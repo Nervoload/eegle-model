@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eegle-model"
+version = "0.1.0"
+description = "EEG model workbench for training, inspecting, and evaluating EEGNet, standard baselines, and foundation-model adapters."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "scikit-learn",
+    "PyYAML",
+]
+
+[project.optional-dependencies]
+eeg = [
+    "mne",
+    "moabb",
+    "braindecode",
+    "pyriemann",
+    "torch",
+    "torchmetrics",
+    "lightning",
+    "pandas",
+    "rich",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+

@@ -1,0 +1,25 @@
+experiment_name: riemann_bnci2014_001_left_right
+output_dir: runs
+
+dataset:
+  source: moabb
+  name: BNCI2014_001
+  paradigm: left_right_imagery
+  subjects: [1]
+  data_dir: data/moabb
+  fmin: 4.0
+  fmax: 38.0
+  tmin: 0.0
+  tmax: null
+  resample: 128.0
+  standardize: trial
+
+model:
+  name: riemann_tangent
+  framework: sklearn
+
+training:
+  valid_size: 0.15
+  test_size: 0.15
+  seed: 42
+

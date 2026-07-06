@@ -1,0 +1,28 @@
+suite_name: p300_eegnet_windows
+output_dir: runs/suites
+
+experiments:
+  - name: eegnet_p300_synthetic_smoke
+    config: configs/eegnet_p300_bnci2014_008.yml
+    overrides:
+      dataset:
+        source: synthetic
+        paradigm: p300
+        synthetic_trials: 192
+        synthetic_channels: 8
+        synthetic_times: 128
+      training:
+        epochs: 2
+        batch_size: 32
+        patience: 2
+
+  - name: eegnet_p300_bnci2014_008_subject1
+    config: configs/eegnet_p300_bnci2014_008.yml
+
+  - name: riemann_p300_bnci2014_008_subject1
+    config: configs/riemann_p300_bnci2014_008.yml
+
+  - name: eegnet_p300_epfl_subject6_optional
+    enabled: false
+    config: configs/eegnet_p300_epfl.yml
+

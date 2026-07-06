@@ -3,4 +3,29 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - tqdm
+  - rich
+  - ipykernel
+  - jupyterlab
+  - mne
+  - moabb
+  - pyriemann
+  - einops
+  - h5py
+  - requests
+  - pyyaml
+  - omegaconf
+  - hydra-core
+  - torchmetrics
+  - lightning
+  - joblib
+  - pip
+  - pip:
+      - braindecode
 prefix: /home/surettej/miniforge3/env/eegml

@@ -1,0 +1,35 @@
+experiment_name: shallow_bnci2014_001_left_right
+output_dir: runs
+
+dataset:
+  source: moabb
+  name: BNCI2014_001
+  paradigm: left_right_imagery
+  subjects: [1]
+  data_dir: data/moabb
+  fmin: 4.0
+  fmax: 38.0
+  tmin: 0.0
+  tmax: null
+  resample: 128.0
+  standardize: trial
+
+model:
+  name: shallow
+  framework: torch
+  kwargs:
+    final_conv_length: auto
+
+training:
+  epochs: 20
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  valid_size: 0.15
+  test_size: 0.15
+  seed: 42
+  patience: 8
+  num_workers: 0
+  device: auto
+  amp: true
+

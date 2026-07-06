@@ -1,0 +1,43 @@
+# Template for BENDR, LaBraM, EEGPT, or another cloned foundation-model repo.
+# The factory must return a torch nn.Module classifier whose forward pass accepts
+# tensors shaped (batch, channels, time) and returns logits shaped (batch, classes).
+experiment_name: foundation_external_bnci2014_001
+output_dir: runs
+
+dataset:
+  source: moabb
+  name: BNCI2014_001
+  paradigm: left_right_imagery
+  subjects: [1]
+  data_dir: data/moabb
+  fmin: 4.0
+  fmax: 38.0
+  tmin: 0.0
+  tmax: null
+  resample: 128.0
+  standardize: trial
+
+model:
+  name: external_torch
+  framework: torch
+  external:
+    repo_path: /home/surettej/eeg-foundation/BENDR
+    module: workbench_adapter
+    factory: build_classifier
+    checkpoint: null
+    strict: false
+    kwargs: {}
+
+training:
+  epochs: 10
+  batch_size: 32
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  valid_size: 0.15
+  test_size: 0.15
+  seed: 42
+  patience: 5
+  num_workers: 0
+  device: auto
+  amp: true
+
