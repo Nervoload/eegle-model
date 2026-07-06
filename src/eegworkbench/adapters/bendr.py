@@ -7,6 +7,8 @@ importing this adapter, so configs can point directly at a future local clone.
 
 from __future__ import annotations
 
+import collections
+import collections.abc
 import inspect
 import os
 from pathlib import Path
@@ -37,6 +39,7 @@ def build_classifier(
     channels = _first_int(n_chans, in_chans, name="n_chans")
     targets = _first_int(n_outputs, n_classes, num_classes, name="n_outputs")
     samples = _first_int(n_times, input_window_samples, name="n_times")
+    _patch_collections_abc_aliases()
 
     try:
         from dn3_ext import BENDRClassification, LinearHeadBENDR
@@ -71,6 +74,14 @@ def build_classifier(
         freeze_position_conv=freeze_position_conv,
     )
     return model
+
+
+def _patch_collections_abc_aliases() -> None:
+    """Make old DN3/BENDR imports work on Python 3.10+."""
+
+    for name in ("Iterable", "Mapping", "MutableMapping", "Sequence", "Callable"):
+        if not hasattr(collections, name):
+            setattr(collections, name, getattr(collections.abc, name))
 
 
 def _load_pretrained_modules(
