@@ -11,6 +11,7 @@ import collections
 import collections.abc
 import inspect
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -47,7 +48,9 @@ def build_classifier(
         raise RuntimeError(
             "Could not import BENDR's dn3_ext module. Clone "
             "https://github.com/SPOClab-ca/BENDR and set BENDR_REPO or "
-            "model.external.repo_path to that clone."
+            "model.external.repo_path to that clone or its parent eeg-foundation "
+            f"folder. Original import error: {exc}. First sys.path entries: "
+            f"{sys.path[:5]}"
         ) from exc
 
     architecture = architecture.lower()

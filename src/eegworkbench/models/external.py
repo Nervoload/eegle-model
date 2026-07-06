@@ -37,7 +37,7 @@ def build_external_torch_model(
         raise ExternalModelError(_external_help())
 
     if repo_path:
-        resolved_repo = str(_expand_path(repo_path).resolve())
+        resolved_repo = str(_resolve_repo_path(repo_path).resolve())
         if resolved_repo not in sys.path:
             sys.path.insert(0, resolved_repo)
 
@@ -62,6 +62,21 @@ def build_external_torch_model(
 
 def _expand_path(value: str | os.PathLike[str]) -> Path:
     return Path(os.path.expandvars(os.fspath(value))).expanduser()
+
+
+def _resolve_repo_path(value: str | os.PathLike[str]) -> Path:
+    """Resolve external repo paths, accepting a parent eeg-foundation folder."""
+
+    path = _expand_path(value)
+    candidates = [
+        path,
+        path / "BENDR",
+        path / "bendr",
+    ]
+    for candidate in candidates:
+        if (candidate / "dn3_ext.py").exists():
+            return candidate
+    return path
 
 
 def _resolve_attr(module: Any, dotted_name: str) -> Any:
