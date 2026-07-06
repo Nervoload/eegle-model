@@ -37,9 +37,10 @@ def build_external_torch_model(
         raise ExternalModelError(_external_help())
 
     if repo_path:
-        resolved_repo = str(_resolve_repo_path(repo_path).resolve())
-        if resolved_repo not in sys.path:
-            sys.path.insert(0, resolved_repo)
+        for resolved_repo in reversed(_resolve_repo_paths(repo_path)):
+            resolved = str(resolved_repo.resolve())
+            if resolved not in sys.path:
+                sys.path.insert(0, resolved)
 
     try:
         module = importlib.import_module(module_name)
@@ -65,7 +66,17 @@ def _expand_path(value: str | os.PathLike[str]) -> Path:
 
 
 def _resolve_repo_path(value: str | os.PathLike[str]) -> Path:
-    """Resolve external repo paths, accepting a parent eeg-foundation folder."""
+    """Resolve the primary external repo path."""
+
+    return _resolve_repo_paths(value)[0]
+
+
+def _resolve_repo_paths(value: str | os.PathLike[str]) -> list[Path]:
+    """Resolve external repo paths, accepting a parent eeg-foundation folder.
+
+    BENDR depends on DN3. When callers point at an ``eeg-foundation`` parent
+    folder, add both ``BENDR`` and sibling ``dn3`` clone paths.
+    """
 
     path = _expand_path(value)
     candidates = [
@@ -75,8 +86,20 @@ def _resolve_repo_path(value: str | os.PathLike[str]) -> Path:
     ]
     for candidate in candidates:
         if (candidate / "dn3_ext.py").exists():
+            paths = [candidate]
+            dn3_path = _find_sibling_dn3(candidate)
+            if dn3_path is not None:
+                paths.append(dn3_path)
+            return paths
+    return [path]
+
+
+def _find_sibling_dn3(bendr_path: Path) -> Path | None:
+    for name in ("dn3", "DN3"):
+        candidate = bendr_path.parent / name
+        if (candidate / "dn3").is_dir() or (candidate / "setup.py").exists():
             return candidate
-    return path
+    return None
 
 
 def _resolve_attr(module: Any, dotted_name: str) -> Any:

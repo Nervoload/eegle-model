@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import collections
 import collections.abc
+import importlib
+import importlib.util
 import inspect
 import os
 import sys
+import traceback
 from pathlib import Path
 from typing import Any
 
@@ -42,16 +45,9 @@ def build_classifier(
     samples = _first_int(n_times, input_window_samples, name="n_times")
     _patch_collections_abc_aliases()
 
-    try:
-        from dn3_ext import BENDRClassification, LinearHeadBENDR
-    except ImportError as exc:
-        raise RuntimeError(
-            "Could not import BENDR's dn3_ext module. Clone "
-            "https://github.com/SPOClab-ca/BENDR and set BENDR_REPO or "
-            "model.external.repo_path to that clone or its parent eeg-foundation "
-            f"folder. Original import error: {exc}. First sys.path entries: "
-            f"{sys.path[:5]}"
-        ) from exc
+    bendr_module = _import_dn3_ext()
+    BENDRClassification = bendr_module.BENDRClassification
+    LinearHeadBENDR = bendr_module.LinearHeadBENDR
 
     architecture = architecture.lower()
     if architecture in {"bendr", "contextual", "contextualizer", "full"}:
@@ -77,6 +73,27 @@ def build_classifier(
         freeze_position_conv=freeze_position_conv,
     )
     return model
+
+
+def _import_dn3_ext() -> Any:
+    spec = importlib.util.find_spec("dn3_ext")
+    if spec is None:
+        raise RuntimeError(
+            "Could not find BENDR's dn3_ext.py on sys.path. Set BENDR_REPO or "
+            "model.external.repo_path to the BENDR clone or its parent "
+            f"eeg-foundation folder. First sys.path entries: {sys.path[:8]}"
+        )
+
+    try:
+        return importlib.import_module("dn3_ext")
+    except Exception as exc:
+        short_trace = "".join(traceback.format_exception_only(type(exc), exc)).strip()
+        raise RuntimeError(
+            f"Found dn3_ext at {spec.origin}, but importing it failed inside "
+            f"BENDR/DN3: {short_trace}. This usually means a nested dependency "
+            "such as dn3, yamlinclude, parse, or objgraph is missing from the "
+            f"active environment. First sys.path entries: {sys.path[:8]}"
+        ) from exc
 
 
 def _patch_collections_abc_aliases() -> None:
