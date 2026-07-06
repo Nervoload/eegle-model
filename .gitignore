@@ -21,3 +21,4 @@ data/**
 !data/interim/.gitkeep
 !data/preprocessed/.gitkeep
 
+eeg-foundation/

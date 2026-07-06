@@ -11,7 +11,7 @@ python scripts/train.py \
   --config configs/bendr_p300_random_init_smoke.yml \
   --device cuda
 
-  mkdir -p ~/eeg-foundation/weights
+mkdir -p ~/eeg-foundation/weights
 
 gh release download v0.1-alpha \
   -R SPOClab-ca/BENDR \
@@ -43,3 +43,29 @@ python scripts/run_suite.py \
   --bendr-repo "$BENDR_REPO" \
   --bendr-encoder "$BENDR_ENCODER_WEIGHTS" \
   --bendr-context "$BENDR_CONTEXT_WEIGHTS"
+
+  $ python scripts/train.py   --config configs/bendr_p300_random_init_smoke.yml   --device cuda
+Traceback (most recent call last):
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/scripts/train.py", line 48, in <module>
+    main()
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/scripts/train.py", line 43, in main
+    summary = run_experiment(config)
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/experiment.py", line 51, in run_experiment
+    result = _run_torch_experiment(config, bundle, splits, run_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/experiment.py", line 77, in _run_torch_experiment
+    model = build_model(
+            ^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/registry.py", line 58, in build_model
+    return build_external_torch_model(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/external.py", line 56, in build_external_torch_model
+    model = factory(**kwargs)
+            ^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/adapters/bendr.py", line 48, in build_classifier
+    bendr_module = _import_dn3_ext()
+                   ^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/adapters/bendr.py", line 81, in _import_dn3_ext
+    raise RuntimeError(
+RuntimeError: Could not find BENDR's dn3_ext.py on sys.path. Set BENDR_REPO or model.external.repo_path to the BENDR clone or its parent eeg-foundation folder. First sys.path entries: ['/home/surettej/dev/eeg-model-workbench/eegle-model/${BENDR_REPO}', '/home/surettej/dev/eeg-model-workbench/eegle-model/src', '/home/surettej/dev/eeg-model-workbench/eegle-model/scripts', '/home/surettej/miniforge3/envs/eegml/lib/python311.zip', '/home/surettej/miniforge3/envs/eegml/lib/python3.11', '/home/surettej/miniforge3/envs/eegml/lib/python3.11/lib-dynload', '/home/surettej/miniforge3/envs/eegml/lib/python3.11/site-packages', '/home/surettej/dev/eeg-model-workbench/eegle-model/src']
