@@ -1,0 +1,45 @@
+python -m pip install "pyyaml-include==1.3.2" PyYAML parse objgraph
+from yamlinclude import YamlIncludeConstructor
+
+cd /path/to/eegle-model
+conda activate eegml
+python -m pip install -e .
+
+export BENDR_REPO=~/eeg-foundation/BENDR
+
+python scripts/train.py \
+  --config configs/bendr_p300_random_init_smoke.yml \
+  --device cuda
+
+  mkdir -p ~/eeg-foundation/weights
+
+gh release download v0.1-alpha \
+  -R SPOClab-ca/BENDR \
+  -D ~/eeg-foundation/weights
+
+ls -lh ~/eeg-foundation/weights
+
+export BENDR_ENCODER_WEIGHTS=~/eeg-foundation/weights/<encoder-file>
+export BENDR_CONTEXT_WEIGHTS=~/eeg-foundation/weights/<contextualizer-file>
+
+cd /path/to/eegle-model
+conda activate eegml
+
+python scripts/run_suite.py \
+  --suite configs/suites/p300_bendr_compare_windows.yml \
+  --device cuda \
+  --subjects 1 \
+  --bendr-repo "$BENDR_REPO" \
+  --bendr-encoder "$BENDR_ENCODER_WEIGHTS" \
+  --bendr-context "$BENDR_CONTEXT_WEIGHTS"
+
+  #Memory issues;
+
+  python scripts/run_suite.py \
+  --suite configs/suites/p300_bendr_compare_windows.yml \
+  --device cuda \
+  --subjects 1 \
+  --batch-size 16 \
+  --bendr-repo "$BENDR_REPO" \
+  --bendr-encoder "$BENDR_ENCODER_WEIGHTS" \
+  --bendr-context "$BENDR_CONTEXT_WEIGHTS"
