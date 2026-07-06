@@ -1,0 +1,6 @@
+name: eegml
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+prefix: /home/surettej/miniforge3/env/eegml
