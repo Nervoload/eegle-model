@@ -37,6 +37,7 @@ def build_external_torch_model(
         raise ExternalModelError(_external_help())
 
     if repo_path:
+        _raise_if_unresolved_env_vars(repo_path, "model.external.repo_path")
         for resolved_repo in reversed(_resolve_repo_paths(repo_path)):
             resolved = str(resolved_repo.resolve())
             if resolved not in sys.path:
@@ -63,6 +64,17 @@ def build_external_torch_model(
 
 def _expand_path(value: str | os.PathLike[str]) -> Path:
     return Path(os.path.expandvars(os.fspath(value))).expanduser()
+
+
+def _raise_if_unresolved_env_vars(value: str | os.PathLike[str], field_name: str) -> None:
+    raw = os.fspath(value)
+    expanded = os.path.expandvars(raw)
+    if "$" in expanded or "%" in expanded:
+        raise ExternalModelError(
+            f"{field_name} contains an unresolved environment variable: {raw!r}. "
+            "Set the environment variable or pass --bendr-repo to scripts/train.py "
+            "or scripts/run_suite.py."
+        )
 
 
 def _resolve_repo_path(value: str | os.PathLike[str]) -> Path:
