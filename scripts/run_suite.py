@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -25,7 +26,14 @@ def main() -> None:
     parser.add_argument("--include-disabled", action="store_true")
     parser.add_argument("--stop-on-error", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--bendr-repo", help="Set BENDR_REPO for BENDR suite configs.")
+    parser.add_argument("--bendr-encoder", help="Set BENDR_ENCODER_WEIGHTS.")
+    parser.add_argument("--bendr-context", help="Set BENDR_CONTEXT_WEIGHTS.")
     args = parser.parse_args()
+
+    _set_env("BENDR_REPO", args.bendr_repo)
+    _set_env("BENDR_ENCODER_WEIGHTS", args.bendr_encoder)
+    _set_env("BENDR_CONTEXT_WEIGHTS", args.bendr_context)
 
     summary = run_suite(
         args.suite,
@@ -41,6 +49,10 @@ def main() -> None:
     print(json.dumps(summary, indent=2, sort_keys=True))
 
 
+def _set_env(name: str, value: str | None) -> None:
+    if value:
+        os.environ[name] = value
+
+
 if __name__ == "__main__":
     main()
-

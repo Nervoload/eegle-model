@@ -1,0 +1,57 @@
+experiment_name: bendr_p300_bnci2014_008_subject1
+output_dir: runs
+
+dataset:
+  source: moabb
+  name: BNCI2014_008
+  paradigm: p300
+  subjects: [1]
+  data_dir: data/moabb
+  fmin: 1.0
+  fmax: 40.0
+  tmin: 0.0
+  tmax: 1.0
+  resample: 256.0
+  standardize: trial
+  synthetic_trials: 192
+  synthetic_channels: 8
+  synthetic_times: 256
+  synthetic_classes: 2
+
+model:
+  name: bendr
+  framework: torch
+  external:
+    repo_path: ${BENDR_REPO}
+    module: eegworkbench.adapters.bendr
+    factory: build_classifier
+    checkpoint: null
+    strict: false
+    kwargs:
+      architecture: bendr
+      encoder_weights: ${BENDR_ENCODER_WEIGHTS}
+      context_weights: ${BENDR_CONTEXT_WEIGHTS}
+      random_init: false
+      freeze_encoder: true
+      freeze_contextualizer: false
+      freeze_position_conv: false
+      strict: false
+      model_kwargs:
+        encoder_h: 512
+        contextualizer_hidden: 3076
+        dropout: 0.1
+
+training:
+  epochs: 10
+  batch_size: 32
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  class_weight: balanced
+  valid_size: 0.15
+  test_size: 0.20
+  seed: 42
+  patience: 5
+  num_workers: 0
+  device: auto
+  amp: true
+

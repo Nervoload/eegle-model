@@ -1,0 +1,45 @@
+suite_name: p300_bendr_compare_windows
+output_dir: runs/suites
+
+experiments:
+  - name: eegnet_p300_synthetic_256hz_smoke
+    config: configs/eegnet_p300_bnci2014_008.yml
+    overrides:
+      dataset:
+        source: synthetic
+        paradigm: p300
+        resample: 256.0
+        synthetic_trials: 192
+        synthetic_channels: 8
+        synthetic_times: 256
+      training:
+        epochs: 2
+        batch_size: 32
+        patience: 2
+
+  - name: bendr_p300_random_init_synthetic_smoke
+    config: configs/bendr_p300_random_init_smoke.yml
+    requires_paths:
+      - ${BENDR_REPO}
+
+  - name: eegnet_p300_bnci2014_008_subject1_256hz
+    config: configs/eegnet_p300_bnci2014_008.yml
+    overrides:
+      dataset:
+        resample: 256.0
+      training:
+        epochs: 10
+
+  - name: riemann_p300_bnci2014_008_subject1_256hz
+    config: configs/riemann_p300_bnci2014_008.yml
+    overrides:
+      dataset:
+        resample: 256.0
+
+  - name: bendr_p300_bnci2014_008_subject1
+    config: configs/bendr_p300_bnci2014_008.yml
+    requires_paths:
+      - ${BENDR_REPO}
+      - ${BENDR_ENCODER_WEIGHTS}
+      - ${BENDR_CONTEXT_WEIGHTS}
+

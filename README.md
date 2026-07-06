@@ -155,6 +155,59 @@ The returned module must:
 That keeps the benchmarking pipeline stable while letting each foundation model
 keep its native implementation.
 
+## BENDR Comparison Suite
+
+BENDR support is wired through `eegworkbench.adapters.bendr`, which imports a
+local clone of `SPOClab-ca/BENDR` at runtime. This lets the baseline suite work
+today and lets BENDR start running as soon as the repo, DN3 dependency, and
+weights exist on the Windows/WSL machine.
+
+After cloning BENDR and downloading its pretrained encoder/contextualizer
+weights, run:
+
+```powershell
+.\scripts\windows\run_bendr_compare.ps1 `
+  -CondaEnv eegml `
+  -Device cuda `
+  -BendrRepo C:\path\to\BENDR `
+  -EncoderWeights C:\path\to\encoder.pt `
+  -ContextWeights C:\path\to\contextualizer.pt
+```
+
+From Ubuntu/WSL directly:
+
+```bash
+conda activate eegml
+pip install -e .
+python scripts/run_suite.py \
+  --suite configs/suites/p300_bendr_compare_windows.yml \
+  --device cuda \
+  --bendr-repo /home/surettej/eeg-foundation/BENDR \
+  --bendr-encoder /home/surettej/eeg-foundation/weights/encoder.pt \
+  --bendr-context /home/surettej/eeg-foundation/weights/contextualizer.pt
+```
+
+The comparison suite includes:
+
+- EEGNet synthetic 256 Hz P300 smoke.
+- BENDR random-init synthetic smoke, skipped until `BENDR_REPO` exists.
+- EEGNet on `BNCI2014_008` at 256 Hz.
+- Riemannian tangent-space baseline on the same split.
+- BENDR pretrained fine-tuning on the same split, skipped until
+  `BENDR_REPO`, `BENDR_ENCODER_WEIGHTS`, and `BENDR_CONTEXT_WEIGHTS` point to
+  real files.
+
+You can test the planned suite shape before downloading weights:
+
+```bash
+python scripts/run_suite.py --suite configs/suites/p300_bendr_compare_windows.yml --dry-run
+```
+
+The BENDR config is [configs/bendr_p300_bnci2014_008.yml](configs/bendr_p300_bnci2014_008.yml).
+If the pretrained checkpoint uses a different hidden size than the default,
+adjust `model.external.kwargs.model_kwargs.encoder_h` and related BENDR
+arguments there.
+
 ## Outputs
 
 Each run writes a timestamped folder under `runs/`:

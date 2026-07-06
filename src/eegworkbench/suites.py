@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
@@ -44,6 +45,16 @@ def run_suite(
             continue
 
         experiment_name = item.get("name") or Path(item["config"]).stem
+        missing_paths = _missing_required_paths(item.get("requires_paths", []))
+        if missing_paths:
+            results.append(
+                {
+                    "name": experiment_name,
+                    "status": "skipped_missing_path",
+                    "missing_paths": missing_paths,
+                }
+            )
+            continue
         try:
             config = _build_experiment_config(suite_file, item)
             config.experiment_name = experiment_name
@@ -97,7 +108,7 @@ def _build_experiment_config(suite_file: Path, item: dict[str, Any]) -> Any:
 
 
 def _resolve_path(suite_file: Path, path: str) -> Path:
-    candidate = Path(path)
+    candidate = Path(_expand_vars(path))
     if candidate.is_absolute():
         return candidate
     repo_root = _find_repo_root(suite_file.resolve())
@@ -121,6 +132,20 @@ def _deep_update(base: dict[str, Any], updates: dict[str, Any]) -> dict[str, Any
         else:
             base[key] = value
     return base
+
+
+def _missing_required_paths(paths: list[str]) -> list[str]:
+    missing = []
+    for raw_path in paths:
+        path_text = _expand_vars(raw_path)
+        path = Path(path_text).expanduser()
+        if "$" in path_text or "%" in path_text or not path.exists():
+            missing.append(raw_path)
+    return missing
+
+
+def _expand_vars(value: str) -> str:
+    return os.path.expandvars(value)
 
 
 def _compact_metrics(metrics: dict[str, Any]) -> dict[str, Any]:

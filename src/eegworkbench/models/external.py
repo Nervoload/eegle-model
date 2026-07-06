@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -36,7 +37,7 @@ def build_external_torch_model(
         raise ExternalModelError(_external_help())
 
     if repo_path:
-        resolved_repo = str(Path(repo_path).expanduser().resolve())
+        resolved_repo = str(_expand_path(repo_path).resolve())
         if resolved_repo not in sys.path:
             sys.path.insert(0, resolved_repo)
 
@@ -57,6 +58,10 @@ def build_external_torch_model(
     if checkpoint:
         _load_checkpoint(model, checkpoint, strict=bool(external_config.get("strict", False)))
     return model
+
+
+def _expand_path(value: str | os.PathLike[str]) -> Path:
+    return Path(os.path.expandvars(os.fspath(value))).expanduser()
 
 
 def _resolve_attr(module: Any, dotted_name: str) -> Any:
@@ -98,7 +103,7 @@ def _load_checkpoint(model: Any, checkpoint: str, *, strict: bool) -> None:
     except ImportError as exc:
         raise ExternalModelError("Loading checkpoints requires PyTorch.") from exc
 
-    checkpoint_path = Path(checkpoint).expanduser()
+    checkpoint_path = _expand_path(checkpoint)
     if not checkpoint_path.exists():
         raise ExternalModelError(f"Checkpoint does not exist: {checkpoint_path}")
     payload = torch.load(checkpoint_path, map_location="cpu")
@@ -116,4 +121,3 @@ def _external_help() -> str:
         "external.module, and external.factory. The factory should return a "
         "torch nn.Module classifier with logits shaped (batch, classes)."
     )
-
