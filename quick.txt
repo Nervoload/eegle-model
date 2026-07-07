@@ -1,8 +1,119 @@
-cd /home/surettej/dev/eeg-model-workbench/eegle-model
-
-python scripts/diagnose_bendr.py --bendr-repo ./eeg-foundation
+ python scripts/diagnose_bendr.py --bendr-repo ./eeg-foundation
 
 python scripts/train.py \
   --config configs/bendr_p300_random_init_smoke.yml \
   --device cuda \
   --bendr-repo ./eeg-foundation
+python: /home/surettej/miniforge3/envs/eegml/bin/python
+python_version: 3.11.15
+cwd: /home/surettej/dev/eeg-model-workbench/eegle-model
+bendr_repo_arg: ./eeg-foundation
+resolved_repo_paths:
+  - /home/surettej/dev/eeg-model-workbench/eegle-model/eeg-foundation/BENDR exists=True
+  - /home/surettej/dev/eeg-model-workbench/eegle-model/eeg-foundation/dn3 exists=True
+pyyaml-include_version: 1.3.2
+PyYAML_version: 6.0.3
+yamlinclude_spec: /home/surettej/miniforge3/envs/eegml/lib/python3.11/site-packages/yamlinclude/__init__.py
+dn3_spec: /home/surettej/dev/eeg-model-workbench/eegle-model/eeg-foundation/dn3/dn3/__init__.py
+dn3_ext_spec: /home/surettej/dev/eeg-model-workbench/eegle-model/eeg-foundation/BENDR/dn3_ext.py
+dn3_ext import: OK
+/home/surettej/miniforge3/envs/eegml/lib/python3.11/site-packages/torch/nn/utils/weight_norm.py:144: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+Receptive field: 143 samples | Downsampled by 96 | Overlap of 47 samples | 2 encoded samples/trial
+/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/torch_loop.py:48: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/torch_loop.py:148: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_amp):
+/home/surettej/miniforge3/envs/eegml/lib/python3.11/site-packages/torch/nn/modules/dropout.py:176: UserWarning: dropout2d: Received a 3D input to dropout2d and assuming that channel-wise 1D dropout behavior is desired - input is interpreted as shape (N, C, L), where C is the channel dim. This behavior will change in a future release to interpret the input as one without a batch dimension, i.e. shape (C, H, W). To maintain the 1D channel-wise dropout behavior, please switch to using dropout1d instead.
+  return F.dropout2d(input, self.p, self.training, self.inplace)
+{
+  "dataset": {
+    "labels": [
+      "NonTarget",
+      "Target"
+    ],
+    "n_chans": 8,
+    "n_times": 256,
+    "n_trials": 96,
+    "source": "synthetic:p300"
+  },
+  "framework": "torch",
+  "history": [
+    {
+      "epoch": 1.0,
+      "train_accuracy": 0.19672131147540983,
+      "train_loss": 1.5615317938757725,
+      "valid_accuracy": 0.8,
+      "valid_loss": 68.3010025024414
+    }
+  ],
+  "model": {
+    "external": {
+      "checkpoint": null,
+      "factory": "build_classifier",
+      "kwargs": {
+        "architecture": "bendr",
+        "model_kwargs": {
+          "contextualizer_hidden": 3076,
+          "dropout": 0.1,
+          "encoder_h": 512
+        },
+        "random_init": true
+      },
+      "module": "eegworkbench.adapters.bendr",
+      "repo_path": "${BENDR_REPO}",
+      "strict": false
+    },
+    "framework": "torch",
+    "kwargs": {},
+    "name": "bendr"
+  },
+  "model_path": "runs/20260707-091755-bendr_p300_random_init_synthetic_smoke/model.pt",
+  "run_dir": "runs/20260707-091755-bendr_p300_random_init_synthetic_smoke",
+  "test_metrics": {
+    "accuracy": 0.8,
+    "average_precision": 0.2,
+    "balanced_accuracy": 0.5,
+    "classification_report": {
+      "NonTarget": {
+        "f1-score": 0.8888888888888888,
+        "precision": 0.8,
+        "recall": 1.0,
+        "support": 16.0
+      },
+      "Target": {
+        "f1-score": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 4.0
+      },
+      "accuracy": 0.8,
+      "macro avg": {
+        "f1-score": 0.4444444444444444,
+        "precision": 0.4,
+        "recall": 0.5,
+        "support": 20.0
+      },
+      "weighted avg": {
+        "f1-score": 0.711111111111111,
+        "precision": 0.64,
+        "recall": 0.8,
+        "support": 20.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        16,
+        0
+      ],
+      [
+        4,
+        0
+      ]
+    ],
+    "f1_macro": 0.4444444444444444,
+    "positive_label": "Target",
+    "positive_prevalence": 0.2,
+    "roc_auc": 0.5
+  }
+}
