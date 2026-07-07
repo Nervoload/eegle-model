@@ -69,3 +69,47 @@ Traceback (most recent call last):
   File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/adapters/bendr.py", line 81, in _import_dn3_ext
     raise RuntimeError(
 RuntimeError: Could not find BENDR's dn3_ext.py on sys.path. Set BENDR_REPO or model.external.repo_path to the BENDR clone or its parent eeg-foundation folder. First sys.path entries: ['/home/surettej/dev/eeg-model-workbench/eegle-model/${BENDR_REPO}', '/home/surettej/dev/eeg-model-workbench/eegle-model/src', '/home/surettej/dev/eeg-model-workbench/eegle-model/scripts', '/home/surettej/miniforge3/envs/eegml/lib/python311.zip', '/home/surettej/miniforge3/envs/eegml/lib/python3.11', '/home/surettej/miniforge3/envs/eegml/lib/python3.11/lib-dynload', '/home/surettej/miniforge3/envs/eegml/lib/python3.11/site-packages', '/home/surettej/dev/eeg-model-workbench/eegle-model/src']
+
+ python scripts/train.py   --config configs/bendr_p300_random_init_smoke.yml   --device cuda
+Traceback (most recent call last):
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/scripts/train.py", line 61, in <module>
+    main()
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/scripts/train.py", line 51, in main
+    summary = run_experiment(config)
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/experiment.py", line 51, in run_experiment
+    result = _run_torch_experiment(config, bundle, splits, run_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/experiment.py", line 77, in _run_torch_experiment
+    model = build_model(
+            ^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/registry.py", line 58, in build_model
+    return build_external_torch_model(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/external.py", line 40, in build_external_torch_model
+    _raise_if_unresolved_env_vars(repo_path, "model.external.repo_path")
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/external.py", line 73, in _raise_if_unresolved_env_vars
+    raise ExternalModelError(
+eegworkbench.models.external.ExternalModelError: model.external.repo_path contains an unresolved environment variable: '${BENDR_REPO}'. Set the environment variable or pass --bendr-repo to scripts/train.py or scripts/run_suite.py.
+
+ python scripts/train.py   --config configs/bendr_p300_random_init_smoke.yml   --device cuda
+Traceback (most recent call last):
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/scripts/train.py", line 61, in <module>
+    main()
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/scripts/train.py", line 51, in main
+    summary = run_experiment(config)
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/experiment.py", line 51, in run_experiment
+    result = _run_torch_experiment(config, bundle, splits, run_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/training/experiment.py", line 77, in _run_torch_experiment
+    model = build_model(
+            ^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/registry.py", line 58, in build_model
+    return build_external_torch_model(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/external.py", line 40, in build_external_torch_model
+    _raise_if_unresolved_env_vars(repo_path, "model.external.repo_path")
+  File "/home/surettej/dev/eeg-model-workbench/eegle-model/src/eegworkbench/models/external.py", line 73, in _raise_if_unresolved_env_vars
+    raise ExternalModelError(
+eegworkbench.models.external.ExternalModelError: model.external.repo_path contains an unresolved environment variable: '${BENDR_REPO}'. Set the environment variable or pass --bendr-repo to scripts/train.py or scripts/run_suite.py.
