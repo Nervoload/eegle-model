@@ -208,6 +208,69 @@ If the pretrained checkpoint uses a different hidden size than the default,
 adjust `model.external.kwargs.model_kwargs.encoder_h` and related BENDR
 arguments there.
 
+## attention8 Export for closedloop
+
+`closedloop` owns the live visual task, marker capture, dashboard, and
+`attention8` operator workflow. This repo now owns a workbench bridge that
+prepares model bundles for that workflow from an `attention8 collect` calibration
+session.
+
+Install this workbench into the same environment as `closedloop` so EEGle sees
+the model aliases (`lora`, `film`, `eegnet`, and `bendr`):
+
+```bash
+cd /path/to/eegle-model
+pip install -e .
+cd /path/to/closedloop
+eegle model-list
+```
+
+After collecting a calibration session in `closedloop`, export the default
+attention8 bundle set:
+
+```bash
+python /path/to/eegle-model/scripts/export_attention8.py \
+  --closedloop-root /path/to/closedloop \
+  --session-dir <calibration-session> \
+  --output-dir <calibration-session>/models/attention8
+```
+
+That writes closedloop-native bundle directories for:
+
+- `torch_eegnet` from the `eegnet` profile.
+- `foundation_head_logreg` from the `lora` profile.
+- `foundation_prototype` from the `film` profile.
+
+Export BENDR as a realtime TorchScript shadow bundle when the BENDR repo and
+weights are available:
+
+```bash
+python /path/to/eegle-model/scripts/export_attention8.py \
+  --closedloop-root /path/to/closedloop \
+  --session-dir <calibration-session> \
+  --output-dir <calibration-session>/models/attention8 \
+  --profile bendr \
+  --bendr-repo /path/to/eeg-foundation/BENDR \
+  --bendr-encoder /path/to/weights/encoder.pt \
+  --bendr-context /path/to/weights/contextualizer.pt
+```
+
+Use the exported directory directly with attention8:
+
+```bash
+attention8 online \
+  --participant sub-001 \
+  --model-dir <calibration-session>/models/attention8 \
+  --primary torch_eegnet \
+  --shadow lora \
+  --shadow film \
+  --shadow bendr
+```
+
+If the alias entry point is not installed in the active `closedloop`
+environment, use the resolved kinds instead:
+`foundation_head_logreg`, `foundation_prototype`, and `foundation_bendr`.
+
 ## Outputs
 
 Each run writes a timestamped folder under `runs/`:
